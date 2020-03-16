@@ -18,10 +18,10 @@ const TELEGRAM_BOT_START_TEXT = `
 **Corona Virus (COVID-19) Informational Bot for India**
 
 \`\`\`
- Command  | Description                       
+ Command  | Description
 ----------|-----------------------------------
-/start    | This description                  
-/stats    | Statistics across states          
+/start    | This description
+/stats    | Statistics across states
 /contacts | Contact information across states
 \`\`\`
 
@@ -40,9 +40,11 @@ Confirmed (Foreigner): <%= data.data.summary.confirmedCasesForeign %>
 Discharged: <%= data.data.summary.discharged %>
 Death(s): <%= data.data.summary.deaths %>
 
+\`\`\`
 <% data.data.regional.forEach(function (r) { %>
-_<%= r.loc -%>_  - Confirmed:<%= r.confirmedCasesIndian + r.confirmedCasesForeign -%> Discharged:<%= r.discharged -%> Deaths:<%= r.deaths -%>
+<%= r.loc -%>: Confirmed:<%= r.confirmedCasesIndian + r.confirmedCasesForeign -%> Discharged:<%= r.discharged -%> Deaths:<%= r.deaths -%>
 <% }) %>
+\`\`\`
   `, {})({ data })
 }
 
@@ -56,9 +58,11 @@ Twitter: <%= data.data.contacts.primary.twitter %>
 Facebook: <%= data.data.contacts.primary.facebook %>
 Media: <%= data.data.contacts.primary.media %>
 
+\`\`\`
 <% data.data.contacts.regional.forEach(function (r) { %>
-_<%= r.loc -%>_  - <%= r.number -%>
+<%= r.loc -%>: <%= r.number -%>
 <% }) %>
+\`\`\`
   `, {})({ data })
 }
 
