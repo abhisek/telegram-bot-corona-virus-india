@@ -40,11 +40,11 @@ Confirmed (Foreigner): <%= data.data.summary.confirmedCasesForeign %>
 Discharged: <%= data.data.summary.discharged %>
 Death(s): <%= data.data.summary.deaths %>
 
-\`\`\`
 <% data.data.regional.forEach(function (r) { %>
-<%= r.loc -%>: Confirmed:<%= r.confirmedCasesIndian + r.confirmedCasesForeign -%> Discharged:<%= r.discharged -%> Deaths:<%= r.deaths -%>
+<%= r.loc %>
+Confirmed:<%= r.confirmedCasesIndian + r.confirmedCasesForeign -%> Discharged:<%= r.discharged -%> Deaths:<%= r.deaths -%>
+
 <% }) %>
-\`\`\`
   `, {})({ data })
 }
 
@@ -58,11 +58,9 @@ Twitter: <%= data.data.contacts.primary.twitter %>
 Facebook: <%= data.data.contacts.primary.facebook %>
 Media: <%= data.data.contacts.primary.media %>
 
-\`\`\`
 <% data.data.contacts.regional.forEach(function (r) { %>
 <%= r.loc -%>: <%= r.number -%>
 <% }) %>
-\`\`\`
   `, {})({ data })
 }
 
@@ -72,7 +70,7 @@ async function handleStats(chat_id) {
     .then(function (response) {
       telegramBot
         .telegram
-        .sendMessage(chat_id, buildStatsMessage(response.data), TelegrafExtra.markdown())
+        .sendMessage(chat_id, buildStatsMessage(response.data))
       resolve()
     })
     .catch(function (err) {
@@ -87,7 +85,7 @@ async function handleContacts(chat_id) {
     .then(function (response) {
       telegramBot
         .telegram
-        .sendMessage(chat_id, buildContactsMessage(response.data), TelegrafExtra.markdown())
+        .sendMessage(chat_id, buildContactsMessage(response.data))
       resolve()
     })
     .catch(function (err) {
