@@ -68,10 +68,15 @@ async function handleStats(chat_id) {
   return new Promise(function (resolve, reject) {
     axios.get('https://api.rootnet.in/covid19-in/stats/latest')
     .then(function (response) {
-      telegramBot
-        .telegram
-        .sendMessage(chat_id, buildStatsMessage(response.data))
-      resolve()
+      try {
+        telegramBot
+          .telegram
+          .sendMessage(chat_id, buildStatsMessage(response.data))
+        resolve()
+      }
+      catch(ex) {
+        reject(ex)
+      }
     })
     .catch(function (err) {
       reject(err)
@@ -83,10 +88,15 @@ async function handleContacts(chat_id) {
   return new Promise(function (resolve, reject) {
     axios.get('https://api.rootnet.in/covid19-in/contacts')
     .then(function (response) {
-      telegramBot
-        .telegram
-        .sendMessage(chat_id, buildContactsMessage(response.data))
-      resolve()
+      try {
+        telegramBot
+          .telegram
+          .sendMessage(chat_id, buildContactsMessage(response.data))
+        resolve()
+      }
+      catch(ex) {
+        reject(ex)
+      }
     })
     .catch(function (err) {
       reject(err)
