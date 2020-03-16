@@ -5,7 +5,6 @@ const morgan = require('morgan')
 const axios = require('axios')
 
 const app = express()
-const bodyParser = require('body-parser')
 const port = process.env.NODE_PORT || 3000
 
 const EJS = require('ejs')
@@ -64,14 +63,12 @@ Media: <%= data.data.contacts.primary.media %>
   `, {})({ data })
 }
 
-async function handleStats(chat_id) {
+async function handleStats(ctx) {
   return new Promise(function (resolve, reject) {
     axios.get('https://api.rootnet.in/covid19-in/stats/latest')
     .then(function (response) {
       try {
-        telegramBot
-          .telegram
-          .sendMessage(chat_id, buildStatsMessage(response.data))
+        ctx.reply(buildStatsMessage(response.data))
         resolve()
       }
       catch(ex) {
@@ -84,14 +81,12 @@ async function handleStats(chat_id) {
   })
 }
 
-async function handleContacts(chat_id) {
+async function handleContacts(ctx) {
   return new Promise(function (resolve, reject) {
     axios.get('https://api.rootnet.in/covid19-in/contacts')
     .then(function (response) {
       try {
-        telegramBot
-          .telegram
-          .sendMessage(chat_id, buildContactsMessage(response.data))
+        ctx.reply(buildContactsMessage(response.data))
         resolve()
       }
       catch(ex) {
@@ -104,52 +99,26 @@ async function handleContacts(chat_id) {
   })
 }
 
-function handleStart(chat_id) {
-  telegramBot
-    .telegram
-    .sendMessage(chat_id, TELEGRAM_BOT_START_TEXT, TelegrafExtra.markdown())
+function handleStart(ctx) {
+  ctx.reply(TELEGRAM_BOT_START_TEXT, TelegrafExtra.markdown())
 }
 
-function handleAnythingElse(chat_id) {
-  telegramBot
-    .telegram
-    .sendMessage(chat_id, 'I do not recognize this command')
+function handleAnythingElse(ctx) {
+  ctx.reply(`I don't recognize the command. Send /start to interact with me`, TelegrafExtra.markdown())
 }
 
-async function botHandler(chat_id, chat_text) {
-  return new Promise(function (resolve, reject) {
-    if (chat_text === '/start') {
-      handleStart(chat_id)
-      resolve()
-    } else if (chat_text === '/stats') {
-      handleStats(chat_id).then(() => resolve()).catch((err) => reject(err))
-    } else if (chat_text === '/contacts') {
-      handleContacts(chat_id).then(() => resolve()).catch((err) => reject(err))
-    } else {
-      handleAnythingElse(chat_id)
-      resolve()
-    }
-  })
-}
+telegramBot.start((ctx) => handleStart(ctx))
+telegramBot.help((ctx) => handleStart(ctx))
+telegramBot.command('stats', async (ctx) => await handleStats(ctx))
+telegramBot.command('contacts', async (ctx) => await handleContacts(ctx))
+telegramBot.hears('hi', (ctx) => ctx.reply('Hey there, I am a bot. Send /start to interact with me'))
+telegramBot.on('text', (ctx) => handleAnythingElse(ctx))
 
-app.use(bodyParser.json())
+// Run as webhook
 app.use(morgan('combined'))
-
-app.post('/', async function (req, res) {
-  let chat_id = req.body.message.chat.id
-  let chat_text = req.body.message.text
-
-  botHandler(chat_id, chat_text)
-  .then(function () {
-    res.status(200).json({ status: 'OK' })
-  })
-  .catch(function (err) {
-    res.status(500).json({ status: 'ERR', message: err.message })
-  })
-})
-
-app.get('/', async function (req, res) {
-  res.status(200).json({ message: 'Telegram bot for Corona Virus (COVID-19) info in India' })
-})
+app.use(telegramBot.webhookCallback('/'))
 
 app.listen(port, () => console.log(`API Service listening on port ${port}!`))
+
+// Run as client
+// telegramBot.launch()
