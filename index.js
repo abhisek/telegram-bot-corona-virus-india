@@ -48,7 +48,17 @@ _<%= r.loc -%>_  - Confirmed:<%= r.confirmedCasesIndian + r.confirmedCasesForeig
 
 function buildContactsMessage(data) {
   return EJS.compile(`
+**Primary Contact**
 
+Phone: <%= data.data.contacts.primary.number %>
+Email: <%= data.data.contacts.primary.email %>
+Twitter: <%= data.data.contacts.primary.twitter %>
+Facebook: <%= data.data.contacts.primary.facebook %>
+Media: <%= data.data.contacts.primary.media %>
+
+<% data.data.contacts.regional.forEach(function (r) { %>
+_<%= r.loc -%>_  - <%= r.number -%>
+<% }) %>
   `, {})({ data })
 }
 
@@ -56,7 +66,6 @@ async function handleStats(chat_id) {
   return new Promise(function (resolve, reject) {
     axios.get('https://api.rootnet.in/covid19-in/stats/latest')
     .then(function (response) {
-      console.log(buildStatsMessage(response.data))
       telegramBot
         .telegram
         .sendMessage(chat_id, buildStatsMessage(response.data), TelegrafExtra.markdown())
