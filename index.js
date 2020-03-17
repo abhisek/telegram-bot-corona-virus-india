@@ -16,15 +16,15 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const TELEGRAM_BOT_START_TEXT = `
 *Corona Virus (COVID-19) Informational Bot for India*
 
-\`\`\`
- Command  | Description
-----------|-----------------------------------
-/start    | This description
-/stats    | Statistics across states
-/contacts | Contact information across states
-/info     | Get info about COVID-19
-/safety   | Get precautions info about COVID-19
-\`\`\`
+Command       Description
+=======       ===========
+/start          This description
+/stats          Statistics across states
+/contacts  Contact information across states
+/info           Get info about COVID-19
+/safety        Get precautions info about COVID-19
+
+Live Tracker available at: \`https://www.covid19india.org/\`
 
 Bot source code: \`https://github.com/abhisek/telegram-bot-corona-virus-india\`
 `
